@@ -18,7 +18,14 @@ const Message = {
         'ja-Hira': 'せつだん',
         'en': 'disconnect',
         'ko': '연결 해제'
-    }
+    },
+    send: {
+        'ja': '[MSG]を送る',
+        'ja-Hira': '[MSG]をおくる',
+        'en': 'send [MSG]',
+        'ko': '[MSG] 보내기'
+    },
+
 }
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira', 'ko'];
@@ -86,6 +93,17 @@ class Scratch3Scratch2WebSerialAPIBlocks {
                     opcode: 'disconnect',
                     blockType: BlockType.COMMAND,
                     text: Message.disconnect[this.locale]
+                },
+                {
+                    opcode: 'send',
+                    blockType: BlockType.COMMAND,
+                    text: Message.send[this.locale],
+                    arguments: {
+                        MSG: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'test'
+                        }
+                    }
                 }
             ],
             menus: {
@@ -93,12 +111,44 @@ class Scratch3Scratch2WebSerialAPIBlocks {
         };
     }
 
-    connect() {
-        alert('connect');
+    async connect() {
+        console.log('connect');
+        if ('serial' in navigator) {
+            try {
+                this.port = await navigator.serial.requestPort();
+                await this.port.open({ baudRate: 115200 });
+                alert('Connected to the serial port');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        } else {
+            console.error('Web Serial API not supported.');
+        }
     }
 
-    disconnect() {
-        alert('disconnect');
+    async disconnect() {
+        console.log('disconnect');
+        if ('serial' in navigator) {
+            if (this.port && this.port.close) {
+                await this.port.close();
+                port = null;
+                alert('Disconnected from the serial port');
+            } else {
+                console.error('No active serial connection to disconnect');
+            }
+        } else {
+            console.error('Web Serial API not supported.');
+        }
+    }
+
+    async send(args) {
+        console.log(args.MSG);
+        if (this.port && this.port.writable) {
+            const writer = this.port.writable.getWriter();
+            const data = new TextEncoder().encode(args.MSG);
+            await writer.write(data);
+            writer.releaseLock();
+        }
     }
 
     /**
