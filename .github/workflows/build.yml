@@ -1,0 +1,36 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "!*"
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: LLK/scratch-gui
+          ref: develop
+      - run: npm install
+      - uses: actions/checkout@v2
+        with:
+          path: ./scratch2webserialapi
+      - run: sh ./scratch2webserialapi/install.sh
+      - run: npm run build
+      - name: npm install under scratch2webserialapi
+        run: npm install
+        working-directory: ./scratch2webserialapi
+      - name: Build scratch2webserialapi.mjs for xcratch
+        run: npm run build
+        working-directory: ./scratch2webserialapi
+      - name: Copy scratch2webserialapi.mjs to build folder
+        run: cp ./scratch2webserialapi/dist/scratch2webserialapi.mjs ./build
+      - name: Copy sample.sb3 to build folder
+        run: cp ./scratch2webserialapi/sample_projects/xcratch/sample.sb3 ./build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
