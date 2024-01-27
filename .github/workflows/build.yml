@@ -28,6 +28,11 @@ jobs:
         with:
           repository: champierre/tmpose2scratch
           path: ./tmpose2scratch
+      - uses: actions/checkout@v3
+        with:
+          repository: champierre/speech2scratch
+          path: ./speech2scratch
+      - run: sh ./speech2scratch/install.sh
       - run: sh ./tmpose2scratch/install.sh
       - run: sh ./tm2scratch/install.sh
       - run: sh ./scratch2webserialapi/install.sh
