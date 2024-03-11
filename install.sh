@@ -5,7 +5,7 @@ LF=${LF%_}
 EXTENSION_NAME=Scratch2WebSerialAPI
 EXTENSION_ID=scratch2webserialapi
 COLLABORATOR=champierre
-EXTENSION_DESCRIPTION="Speech Recognition Blocks."
+EXTENSION_DESCRIPTION="Scratch2WebSerialAPI Blocks."
 
 mkdir -p node_modules/scratch-vm/src/extensions/scratch3_${EXTENSION_ID}
 cp ${EXTENSION_ID}/scratch-vm/src/extensions/scratch3_${EXTENSION_ID}/index.js node_modules/scratch-vm/src/extensions/scratch3_${EXTENSION_ID}/
